@@ -31,7 +31,8 @@ def keywordSugesstion(keyword):
 #release hotel(when click search)
 @app.route("/hotels/gethotels/<keyword>", methods=["GET"])
 def releaseHotel(keyword):
-    pass
+    # test
+    return 1
 
 
 #get hotels by hotel id(when click on specific hotel)
