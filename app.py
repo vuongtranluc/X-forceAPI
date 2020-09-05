@@ -7,24 +7,6 @@ import numpy as np
 #init app
 app = Flask(__name__)
 
-#url to get overscore by hotel_id
-@app.route("/hotels/overallScore/<int:hotel_id>",methods=["GET"])
-def get_overalScore(hotel_id):
-    rows = query.get_overallScore(hotel_id)
-    data = []
-    
-    for r in rows: 
-        data.append({
-            "overall_score": r[3],
-            "location_score": r[4],
-            "sleep_quality_score":r[5],
-            "meal_score": r[6],
-            "service_score": r[7],
-            "cleanliness_score": r[8]
-        })
-
-    return jsonify(data)
-
 #recomment base on keywords
 @app.route("/hotels/keywordsuggestion/<keyword>", methods=["GET"])
 def keywordSugesstion(keyword):
@@ -64,6 +46,8 @@ def keywordSugesstion(keyword):
 #release hotel(when click search)
 @app.route("/hotels/gethotels/<int:search_id>/<int:type_code>/<filters>/<star_number>", methods=["GET"])
 def finalSearch(search_id, type_code, filters, star_number):
+    filters = filters.strip()
+    star_number = star_number.strip()
     data = []
     if type_code == 1:
         df = query.getHotelsInProvince(search_id, filters, star_number)
@@ -71,8 +55,6 @@ def finalSearch(search_id, type_code, filters, star_number):
         df = query.getHotelsInDistrict(search_id, filters, star_number)
     if type_code == 3:
         df = query.getHotelsWithName(search_id)
-
-    df[5] = 8
     
     for index, row in df.iterrows(): 
         data.append({

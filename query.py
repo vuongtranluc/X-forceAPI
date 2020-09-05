@@ -22,11 +22,14 @@ def searchDistrict(string):
 def searchHotelName(string):
     phoenix_db = load_data.SqlCommon()  
     df = pd.DataFrame(phoenix_db.execute("select id, name from roothotel_info where name = \'" + string + "\'"))
+    FinalMapping = pd.read_csv('FinalMapping.csv')
+    hotel_ids = FinalMapping['hotel_id'].values
+    df = pd.DataFrame(df[df[0].isin(hotel_ids)])
     return df
 
 def getHotelsInProvince(province_id, filters, star_number):
     sql = "select id, name, address, logo, star_number from roothotel_info where province_id = " + str(province_id)
-    if star_number != "":
+    if star_number != "6":
         star_number = list(set(map(int, star_number.split('_'))))
         star_number.sort()
         sql_where = ""
@@ -36,18 +39,25 @@ def getHotelsInProvince(province_id, filters, star_number):
             else:
                 sql_where += " or star_number=" + str(s)
         sql += sql_where + ")"
+    # print(sql)
     phoenix_db = load_data.SqlCommon()  
     df = pd.DataFrame(phoenix_db.execute(sql))
-    domain_hotel_mapping_ids = sort_and_filter.handle_filter(filters)
     FinalMapping = pd.read_csv('FinalMapping.csv')
-    df_result = pd.DataFrame(FinalMapping[FinalMapping['domain_hotel_mapping_id'].isin(domain_hotel_mapping_ids)])
-    hotel_ids = df_result['hotel_id'].values
-    df = pd.DataFrame(df[df[0].isin(hotel_ids)])
+    if filters != "15":
+        # print("hghj")
+        domain_hotel_mapping_ids = sort_and_filter.handle_filter(filters)
+        
+        df_result = pd.DataFrame(FinalMapping[FinalMapping['domain_hotel_mapping_id'].isin(domain_hotel_mapping_ids)])
+        hotel_ids = df_result['hotel_id'].values
+        df = pd.DataFrame(df[df[0].isin(hotel_ids)])
+    else:
+        hotel_ids = FinalMapping['hotel_id'].values
+        df = pd.DataFrame(df[df[0].isin(hotel_ids)])
     return df
-
+# getHotelsInProvince(11, "1_2", "6")
 def getHotelsInDistrict(district_id, filters, star_number):
     sql = "select id, name, address, logo, star_number from roothotel_info where district_id = " + str(district_id)
-    if star_number != "":
+    if star_number != "6":
         star_number = list(set(map(int, star_number.split('_'))))
         star_number.sort()
         sql_where = ""
@@ -59,12 +69,23 @@ def getHotelsInDistrict(district_id, filters, star_number):
         sql += sql_where + ")"
     phoenix_db = load_data.SqlCommon()  
     df = pd.DataFrame(phoenix_db.execute(sql))
-    domain_hotel_mapping_ids = sort_and_filter.handle_filter(filters)
+    # print(df)
+    # return df
     FinalMapping = pd.read_csv('FinalMapping.csv')
-    df_result = pd.DataFrame(FinalMapping[FinalMapping['domain_hotel_mapping_id'].isin(domain_hotel_mapping_ids)])
-    hotel_ids = df_result['hotel_id'].values
-    df = pd.DataFrame(df[df[0].isin(hotel_ids)])
+    if filters != "15":
+        # print("hghj")
+        domain_hotel_mapping_ids = sort_and_filter.handle_filter(filters)
+        
+        df_result = pd.DataFrame(FinalMapping[FinalMapping['domain_hotel_mapping_id'].isin(domain_hotel_mapping_ids)])
+        hotel_ids = df_result['hotel_id'].values
+        df = pd.DataFrame(df[df[0].isin(hotel_ids)])
+    else:
+        hotel_ids = FinalMapping['hotel_id'].values
+        df = pd.DataFrame(df[df[0].isin(hotel_ids)])
+        print(df)
+        print("//////////////////////////////////////////////////////////")
     return df
+# print(getHotelsInDistrict(483, "15", "6"))
 
 def getHotelsWithName(hotel_id):
     sql = "select id, name, address, logo, star_number from roothotel_info where id = " + str(hotel_id)
@@ -87,6 +108,8 @@ def get_overallScore(hotel_id):
     score = conn.execute(sql, (hotel_id,)).fetchall()
     conn.close()
     return list(score[0])
+
+# print(get_overallScore(15))
 
 def getInformation(hotel_id):
     sql = "select id, name, address, logo, latitude, longitude from roothotel_info where id = " + str(hotel_id)
