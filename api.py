@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import os
 import query, load_data, sort_and_filter
 import pandas as pd
@@ -62,8 +62,8 @@ def keywordSugesstion(keyword):
     return jsonify(data)
 
 #release hotel(when click search)
-@app.route("/hotels/gethotels/<int:search_id>/<int:type_code>/<int:page_number>/<filters>/<star_number>", methods=["GET"])
-def finalSearch(search_id, type_code, page_number, filters, star_number):
+@app.route("/hotels/gethotels/<int:search_id>/<int:type_code>/<filters>/<star_number>", methods=["GET"])
+def finalSearch(search_id, type_code, filters, star_number):
     data = []
     if type_code == 1:
         df = query.getHotelsInProvince(search_id, filters, star_number)
@@ -110,7 +110,7 @@ def getByID(hotel_id):
         })
     return jsonify(data)
 
-@app.route("/hotels/getAllId/<int:hotel_id>")
+@app.route("/hotels/getAllId/<int:hotel_id>", methods=["GET"])
 def getAllId(hotel_id):
     data = []
     df = query.getAllId(hotel_id)
@@ -123,6 +123,10 @@ def getAllId(hotel_id):
         })
 
     return jsonify(data)
+
+@app.route("/", methods=["GET"])
+def home():
+    return render_template('instruction.html')
 
 #Run server
 if __name__ == "__main__":
