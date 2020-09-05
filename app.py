@@ -25,7 +25,7 @@ def keywordSugesstion(keyword):
             "type_code": 1
         })
     if len(data) != 0:
-        return json.dumps(data)
+        return app.response_class(json.dumps(data),mimetype='application/json')
     df = query.searchDistrict(keyword)
     for index, row in df.iterrows(): 
         data.append({
@@ -34,7 +34,7 @@ def keywordSugesstion(keyword):
             "type_code": 2
         })
     if len(data) != 0:
-        return json.dumps(data)
+        return app.response_class(json.dumps(data),mimetype='application/json')
     df = query.searchHotelName(keyword)
     for index, row in df.iterrows(): 
         data.append({
@@ -42,7 +42,7 @@ def keywordSugesstion(keyword):
             "name": row[1],
             "type_code": 3
         })
-    return json.dumps(data)
+    return app.response_class(json.dumps(data),mimetype='application/json')
 
 #release hotel(when click search)
 @app.route("/hotels/gethotels/<int:search_id>/<int:type_code>/<filters>/<star_number>", methods=["GET"])
@@ -68,7 +68,7 @@ def finalSearch(search_id, type_code, filters, star_number):
             "point_hidden": round(sum(query.get_overallScore(row[0])[3:]), 2)
         })
     data.sort(reverse=True, key=lambda row: row["point_hidden"])
-    return json.dumps(data)
+    return app.response_class(json.dumps(data),mimetype='application/json')
     
 #get hotels by hotel id(when click on specific hotel)
 @app.route("/hotels/getByID/<int:hotel_id>", methods=["GET"])
@@ -91,7 +91,7 @@ def getByID(hotel_id):
             "cleanliness_score": round(arr[8], 1),
             "description": query.getDescription(row['hotel_id'])
         })
-    return json.dumps(data)
+    return app.response_class(json.dumps(data),mimetype='application/json')
 
 @app.route("/hotels/getAllId/<int:hotel_id>", methods=["GET"])
 def getAllId(hotel_id):
@@ -105,7 +105,7 @@ def getAllId(hotel_id):
             "domain_hotel_id": row['domain_hotel_id']
         })
     # print("??????")
-    return json.dumps(data)
+    return app.response_class(json.dumps(data),mimetype='application/json')
 
 @app.route("/", methods=["GET"])
 def home():
