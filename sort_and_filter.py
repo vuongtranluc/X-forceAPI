@@ -23,17 +23,7 @@ def handle_filter(filters):
     phoenix_db = load_data.SqlCommon()  
     df_filter = pd.DataFrame(phoenix_db.execute(sql))
     return df_filter[0].values
-    
-    
-# string = 'ha noi'
-# province_id = 2
-# string = handle_input.string_no_accent(string)
-# phoenix_db = load_data.SqlCommon()  
-# df = pd.DataFrame(phoenix_db.execute("select id, name, address, logo, star_number from roothotel_info where province_id = " + str(province_id)))
-# # print(df[0].values)
-# handle_filter(df, "1_2")
-
-# def 
+   
 
 """ 
     filter-code:

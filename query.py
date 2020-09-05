@@ -86,6 +86,43 @@ def get_overallScore(hotel_id):
     sql = "SELECT * FROM finalScore WHERE hotel_id = ?" 
     score = conn.execute(sql, (hotel_id,)).fetchall()
     conn.close()
+    return list(score[0])
 
-    return score
+def getInformation(hotel_id):
+    sql = "select id, name, address, logo, latitude, longitude from roothotel_info where id = " + str(hotel_id)
+    phoenix_db = load_data.SqlCommon()  
+    df = pd.DataFrame(phoenix_db.execute(sql), 
+                      columns=['hotel_id', 'name', 'address', 'logo', 'latitude', 'longitude'])
+    return df
+    
+def getAllId(hotel_id):
+    FinalMapping = pd.read_csv('FinalMapping.csv')
+    df = pd.DataFrame(FinalMapping[FinalMapping['hotel_id'] == hotel_id][['hotel_id', 'domain_id', 'domain_hotel_mapping_id']])
+    df['domain_hotel_id'] = 0
+    for index, row in df.iterrows():
+        df.loc[df['domain_hotel_mapping_id'] == row['domain_hotel_mapping_id'], 'domain_hotel_id'] = getDomainHotelId(row['domain_hotel_mapping_id'])
+    df = df.drop_duplicates(subset='domain_hotel_id', keep="first")
+    return df
+    
+def getDomainHotelId(domain_hotel_mapping_id):
+    sql = "select domain_hotel_id from hotel_mapping where id = \'" + domain_hotel_mapping_id + "\'"
+    phoenix_db = load_data.SqlCommon()  
+    df = pd.DataFrame(phoenix_db.execute(sql))
+    return df[0][0]
+    
+# print(getDomainHotelId("005287cd-096c-4d75-9551-022b37920c69"))
+# print(sum(get_overallScore(2), 3))
+# print(get_overallScore(2))
 
+def getDescription(hotel_id):
+    df = getAllId(hotel_id)
+    # print(df)
+    domain_hotel_mapping_id = df['domain_hotel_mapping_id'].tolist()[-1]
+    print(domain_hotel_mapping_id)
+    sql = "select description from hotel_info where hotel_id = \'" + domain_hotel_mapping_id + "\'"
+    phoenix_db = load_data.SqlCommon()  
+    df = pd.DataFrame(phoenix_db.execute(sql))
+    return (df[0][0])
+
+# getDescription(54)
+# print("ghj")
