@@ -3,6 +3,7 @@ import os
 import query, load_data, sort_and_filter
 import pandas as pd
 import numpy as np
+import json
 
 #init app
 app = Flask(__name__)
@@ -41,7 +42,7 @@ def keywordSugesstion(keyword):
             "name": row[1],
             "type_code": 3
         })
-    return jsonify(data)
+    return json.dumps(data)
 
 #release hotel(when click search)
 @app.route("/hotels/gethotels/<int:search_id>/<int:type_code>/<filters>/<star_number>", methods=["GET"])
@@ -67,7 +68,7 @@ def finalSearch(search_id, type_code, filters, star_number):
             "point_hidden": round(sum(query.get_overallScore(row[0])[3:]), 2)
         })
     data.sort(reverse=True, key=lambda row: row["point_hidden"])
-    return jsonify(data)
+    return json.dumps(data)
     
 #get hotels by hotel id(when click on specific hotel)
 @app.route("/hotels/getByID/<int:hotel_id>", methods=["GET"])
@@ -90,7 +91,7 @@ def getByID(hotel_id):
             "cleanliness_score": round(arr[8], 1),
             "description": query.getDescription(row['hotel_id'])
         })
-    return jsonify(data)
+    return json.dumps(data)
 
 @app.route("/hotels/getAllId/<int:hotel_id>", methods=["GET"])
 def getAllId(hotel_id):
@@ -103,8 +104,8 @@ def getAllId(hotel_id):
             "domain_hotel_mapping_id":row['domain_hotel_mapping_id'],
             "domain_hotel_id": row['domain_hotel_id']
         })
-
-    return jsonify(data)
+    print("??????")
+    return json.dumps(data)
 
 @app.route("/", methods=["GET"])
 def home():
