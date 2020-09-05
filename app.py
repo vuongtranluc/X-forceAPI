@@ -25,7 +25,7 @@ def keywordSugesstion(keyword):
             "type_code": 1
         })
     if len(data) != 0:
-        return jsonify(data)
+        return json.dumps(data)
     df = query.searchDistrict(keyword)
     for index, row in df.iterrows(): 
         data.append({
@@ -34,7 +34,7 @@ def keywordSugesstion(keyword):
             "type_code": 2
         })
     if len(data) != 0:
-        return jsonify(data)
+        return json.dumps(data)
     df = query.searchHotelName(keyword)
     for index, row in df.iterrows(): 
         data.append({
@@ -104,7 +104,7 @@ def getAllId(hotel_id):
             "domain_hotel_mapping_id":row['domain_hotel_mapping_id'],
             "domain_hotel_id": row['domain_hotel_id']
         })
-    print("??????")
+    # print("??????")
     return json.dumps(data)
 
 @app.route("/", methods=["GET"])
