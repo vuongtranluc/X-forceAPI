@@ -4,8 +4,10 @@ import handle_input
 import sort_and_filter
 import pandas as pd
 import numpy as np
+from fuzzywuzzy import fuzz
+from fuzzywuzzy import process
 
-phoenix_db = load_data.SqlCommon()
+# phoenix_db = load_data.SqlCommon()
 
 def searchProvince(string):
     string = "%%" + string + "%%"
@@ -88,7 +90,7 @@ def getHotelsInDistrict(district_id, filters, star_number):
         hotel_ids = FinalMapping['hotel_id'].values
         df = pd.DataFrame(df[df[0].isin(hotel_ids)])
         print(df)
-        print("//////////////////////////////////////////////////////////")
+        # print("//////////////////////////////////////////////////////////")
     return df
 # print(getHotelsInDistrict(483, "15", "6"))
 
@@ -154,3 +156,11 @@ def getDescription(hotel_id):
 
 # getDescription(54)
 # print("ghj")
+
+def keywordSugesstion(keyword):
+    df = pd.read_csv("Search.csv")
+    df["score"] = df["name_no_accent"].apply(lambda x: fuzz.token_set_ratio(x, keyword))
+    df = df.sort_values(by=["score", "type_code"], ascending=[False, True])
+    return df.head(3)
+
+# print(keywordSugesstion('ha loi'))

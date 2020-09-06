@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 import os
-import query, load_data, sort_and_filter
+import query, load_data, sort_and_filter, handle_input
 import pandas as pd
 import numpy as np
 import json
@@ -17,45 +17,39 @@ def keywordSugesstion(keyword):
     # 2: district
     # 3: hotel name
     keyword = " ".join(keyword.split())
+    keyword = handle_input.string_no_accent(keyword)
     data = []
-    df = query.searchProvince(keyword)
+    df = query.keywordSugesstion(keyword)
     for index, row in df.iterrows(): 
         data.append({
-            "search_id": row[0],
-            "name": row[1],
-            "type_code": 1
-        })
-    if len(data) != 0:
-        return app.response_class(json.dumps(data),mimetype='application/json')
-    df = query.searchDistrict(keyword)
-    for index, row in df.iterrows(): 
-        data.append({
-            "search_id": row[0],
-            "name": row[1],
-            "type_code": 2
-        })
-    if len(data) != 0:
-        return app.response_class(json.dumps(data),mimetype='application/json')
-    df = query.searchHotelName(keyword)
-    for index, row in df.iterrows(): 
-        data.append({
-            "search_id": row[0],
-            "name": row[1],
-            "type_code": 3
+            "search_id": row['search_id'],
+            "name": row['name'],
+            "type_code":row['type_code'],
+            "score": row['score']
         })
     return app.response_class(json.dumps(data),mimetype='application/json')
 
 #release hotel(when click search)
-@app.route("/hotels/gethotels/<int:search_id>/<int:type_code>/<filters>/<star_number>", methods=["GET"])
+@app.route("/hotels/gethotels/<search_id>/<int:type_code>/<filters>/<star_number>", methods=["GET"])
 def finalSearch(search_id, type_code, filters, star_number):
     filters = filters.strip()
+    search_id = search_id.strip()
     star_number = star_number.strip()
     data = []
+    if type_code == 0:
+        search_id = " ".join(search_id.split())
+        search_id = handle_input.string_no_accent(search_id)
+        df = query.keywordSugesstion(search_id)
+        search_id = df.head(1)['search_id'].tolist()[0]
+        type_code = df.head(1)['type_code'].tolist()[0]
     if type_code == 1:
+        search_id = int(search_id)
         df = query.getHotelsInProvince(search_id, filters, star_number)
     if type_code == 2:
+        search_id = int(search_id)
         df = query.getHotelsInDistrict(search_id, filters, star_number)
     if type_code == 3:
+        search_id = int(search_id)
         df = query.getHotelsWithName(search_id)
     
     for index, row in df.iterrows(): 
