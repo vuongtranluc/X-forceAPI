@@ -8,20 +8,25 @@ import numpy as np
 phoenix_db = load_data.SqlCommon()
 
 def searchProvince(string):
+    string = "%%" + string + "%%"
     string = handle_input.string_no_accent(string)
     phoenix_db = load_data.SqlCommon()  
-    df = pd.DataFrame(phoenix_db.execute("select id, name from province where name_no_accent = \'" + string + "\'"))
+    df = pd.DataFrame(phoenix_db.execute("select id, name from province where name_no_accent like \'" + string + "\'"))
     return df
 
+# print(searchProvince('ha noi'))
+
 def searchDistrict(string):
+    string = "%%" + string + "%%"
     string = handle_input.string_no_accent(string)
     phoenix_db = load_data.SqlCommon()  
-    df = pd.DataFrame(phoenix_db.execute("select id, name from district where name_no_accent = \'" + string + "\'"))
+    df = pd.DataFrame(phoenix_db.execute("select id, name from district where name_no_accent like \'" + string + "\'"))
     return df
 
 def searchHotelName(string):
+    string = "%%" + string + "%%"
     phoenix_db = load_data.SqlCommon()  
-    df = pd.DataFrame(phoenix_db.execute("select id, name from roothotel_info where name = \'" + string + "\'"))
+    df = pd.DataFrame(phoenix_db.execute("select id, name from roothotel_info where name like \'" + string + "\'"))
     FinalMapping = pd.read_csv('FinalMapping.csv')
     hotel_ids = FinalMapping['hotel_id'].values
     df = pd.DataFrame(df[df[0].isin(hotel_ids)])

@@ -16,6 +16,7 @@ def keywordSugesstion(keyword):
     # 1: province
     # 2: district
     # 3: hotel name
+    keyword = " ".join(keyword.split())
     data = []
     df = query.searchProvince(keyword)
     for index, row in df.iterrows(): 
