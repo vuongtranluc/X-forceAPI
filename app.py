@@ -57,20 +57,27 @@ def finalSearch(search_id, type_code, filters, star_number):
         ##
         ## Luc update find min price 
         ##
-        minPrice = collectMinPrice(row[0])
+        print(row[0])
+        minPrice = query.collectMinPrice(int(row[0]))
+        print(minPrice[0], minPrice[1])
+        # minPrice = (0, 0)
+
         data.append({
-            "min_hotel_id": minPrice[0],
-            "min_price": minPrice[1],
             "hotel_id": row[0],
-            "name": row[1],
+            "name": row[1], 
             "address": row[2],
             "logo": row[3],
             "star_number": row[4],
             "overall_score": round(query.get_overallScore(row[0])[3], 1),
-            "point_hidden": round(sum(query.get_overallScore(row[0])[3:]), 2)
+            "point_hidden": round(sum(query.get_overallScore(row[0])[3:]), 2),
+            "min_hotel_id": int(minPrice[0]),
+            "min_price": int(minPrice[1])
         })
-    data.sort(reverse=True, key=lambda row: row["point_hidden"])
+    if data != []:
+        data.sort(reverse=True, key=lambda row: row["point_hidden"])
     return app.response_class(json.dumps(data),mimetype='application/json')
+    # print(data)
+    # return jsonify(data)
     
 #get hotels by hotel id(when click on specific hotel)
 @app.route("/hotels/getByID/<int:hotel_id>", methods=["GET"])
@@ -115,4 +122,4 @@ def home():
 
 #Run server
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True)

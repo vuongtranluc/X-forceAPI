@@ -176,38 +176,42 @@ def getDomainHotelMappingID(hotelID):
 # print(getDomainHotelMappingID(5))
 
 def getMinPrice(domain_hotel_id):
-    sql = "Select final_amount_min from hotel_price_daily where domain_hotel_id = {0} order by final_amount_min limit 1".format(domain_hotel_id)
-    phoenix_db = load_data.SqlCommon()
-    df = df = pd.DataFrame(phoenix_db.execute(sql))
-    return df[0][0]
+    try:
+        sql = "Select final_amount_min from hotel_price_daily where domain_hotel_id = {0} order by final_amount_min limit 1".format(domain_hotel_id)
+        phoenix_db = load_data.SqlCommon()
+        df = pd.DataFrame(phoenix_db.execute(sql))
+        return df[0][0]
+    except:
+        return -1
+    
+# print()
 
 def collectMinPrice(hotel_id):
-    domainHotelMappingID = getDomainHotelMappingID(hotel_id)
-    # print("DomainHotelMapping: ", domainHotelMappingID)
-    domainHotelID = []
-
-    for i in domainHotelMappingID:
-        domainHotelID.append(getDomainHotelId(i))
-    # print("domainHotelID: ", domainHotelID)
-    minPrice = []
-
-    for y in domainHotelID:
-        # print("domainHotelID: ", y)
-        minPrice.append((y, getMinPrice(y)))
-
-    return findMinPrice(minPrice)
+    try:
+        domainHotelMappingID = getDomainHotelMappingID(hotel_id)
+        # print("DomainHotelMapping: ", domainHotelMappingID)
+        domainHotelID = []
+        print(domainHotelMappingID)
+        for i in domainHotelMappingID:
+            domainHotelID.append(getDomainHotelId(i))
+        # print("domainHotelID: ", domainHotelID)
+        minPrice = []
+        for y in domainHotelID:
+            # print("domainHotelID: ", y)
+            minPrice.append((y, getMinPrice(y)))
+            
+        return findMinPrice(minPrice)
+    except:
+        return [(-1,-1)]
 
 def findMinPrice(ListPrice):
-    minPrice = ListPrice[0]
-
-    for i in ListPrice:
-        if i[1] < minPrice[1]:
-            minPrice = i
-
-    return minPrice
-
-# print(getMinPrice(1000000113617))
-# print(keywordSugesstion('ha loi'))
-# print(collectMinPrice(4))
+    try: 
+        minPrice = ListPrice[0]
+        for i in ListPrice:
+            if i[1] < minPrice[1]:
+                minPrice = i
+        return minPrice
+    except:
+        return (-1, -1)
 
 
