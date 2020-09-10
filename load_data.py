@@ -52,8 +52,8 @@ class SqlCommon:
 # phoenix_db = SqlCommon()
 
 # if __name__ == '__main__':
-#     # with phoenix_db.get_session() as session:
-#     #     domains = session.query(Domain).all()
-#     # print(f'size: {len(domains)}')
-#     df = pd.DataFrame(phoenix_db.execute('select * from cosine_hotel limit 100'))#, columns=['id', 'hotel_id', 'domain_id', 'domain_hotel_id', 'cosine_name', 'cosine_address', 'distance', 'similar_point', 'rank_point', 'created_date_id', 'created_datetime'])
+# #     # with phoenix_db.get_session() as session:
+# #     #     domains = session.query(Domain).all()
+# #     # print(f'size: {len(domains)}')
+#     df = pd.DataFrame(phoenix_db.execute('select * from hotel_price_daily limit 100'))#, columns=['id', 'hotel_id', 'domain_id', 'domain_hotel_id', 'cosine_name', 'cosine_address', 'distance', 'similar_point', 'rank_point', 'created_date_id', 'created_datetime'])
 #     print(df)

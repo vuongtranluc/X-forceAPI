@@ -27,6 +27,7 @@ def keywordSugesstion(keyword):
             "type_code":row['type_code'],
             "score": row['score']
         })
+
     return app.response_class(json.dumps(data),mimetype='application/json')
 
 #release hotel(when click search)
@@ -53,7 +54,13 @@ def finalSearch(search_id, type_code, filters, star_number):
         df = query.getHotelsWithName(search_id)
     
     for index, row in df.iterrows(): 
+        ##
+        ## Luc update find min price 
+        ##
+        minPrice = collectMinPrice(row[0])
         data.append({
+            "min_hotel_id": minPrice[0],
+            "min_price": minPrice[1],
             "hotel_id": row[0],
             "name": row[1],
             "address": row[2],

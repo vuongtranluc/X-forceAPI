@@ -100,14 +100,6 @@ def getHotelsWithName(hotel_id):
     df = pd.DataFrame(phoenix_db.execute(sql))
     return df
 
-def keywordSugesstion(keyword):
-    pass
-
-def releaseHotel(keyword):
-    pass
-
-def getByID(hotelID):
-    pass
 
 def get_overallScore(hotel_id):
     conn = sqlite3.connect('database1.db')
@@ -140,7 +132,7 @@ def getDomainHotelId(domain_hotel_mapping_id):
     df = pd.DataFrame(phoenix_db.execute(sql))
     return df[0][0]
     
-# print(getDomainHotelId("005287cd-096c-4d75-9551-022b37920c69"))
+# print(getDomainHotelId("95a50186-3167-4000-9f74-ce716fbb973f"))
 # print(sum(get_overallScore(2), 3))
 # print(get_overallScore(2))
 
@@ -163,4 +155,59 @@ def keywordSugesstion(keyword):
     df = df.sort_values(by=["score", "type_code"], ascending=[False, True])
     return df.head(3)
 
+
+###
+### Luc's update 10/9/2020
+###
+
+def getDomainHotelMappingID(hotelID):
+    conn = sqlite3.connect('FinalMapping.db')
+    sql = "SELECT domain_hotel_mapping_id FROM FinalMapping WHERE hotel_id = ?" 
+    # mappingID is a list of tuple, each tuple has a form (domainHotelMappingId,)
+    mappingID = conn.execute(sql, (hotelID,)).fetchall()
+    conn.close()
+
+    finalMappingID = []
+    for i in range(len(mappingID)):
+        rawID = mappingID[i][0]
+        finalMappingID.append(rawID[:(len(rawID)-1)])
+
+    return finalMappingID
+# print(getDomainHotelMappingID(5))
+
+def getMinPrice(domain_hotel_id):
+    sql = "Select final_amount_min from hotel_price_daily where domain_hotel_id = {0} order by final_amount_min limit 1".format(domain_hotel_id)
+    phoenix_db = load_data.SqlCommon()
+    df = df = pd.DataFrame(phoenix_db.execute(sql))
+    return df[0][0]
+
+def collectMinPrice(hotel_id):
+    domainHotelMappingID = getDomainHotelMappingID(hotel_id)
+    # print("DomainHotelMapping: ", domainHotelMappingID)
+    domainHotelID = []
+
+    for i in domainHotelMappingID:
+        domainHotelID.append(getDomainHotelId(i))
+    # print("domainHotelID: ", domainHotelID)
+    minPrice = []
+
+    for y in domainHotelID:
+        # print("domainHotelID: ", y)
+        minPrice.append((y, getMinPrice(y)))
+
+    return findMinPrice(minPrice)
+
+def findMinPrice(ListPrice):
+    minPrice = ListPrice[0]
+
+    for i in ListPrice:
+        if i[1] < minPrice[1]:
+            minPrice = i
+
+    return minPrice
+
+# print(getMinPrice(1000000113617))
 # print(keywordSugesstion('ha loi'))
+# print(collectMinPrice(4))
+
+
