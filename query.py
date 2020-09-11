@@ -215,3 +215,11 @@ def findMinPrice(ListPrice):
         return (-1, -1)
 
 
+def getMinPrice(hotel_id):
+    df = pd.read_csv("minPrice.csv")
+    try:
+        return df[df['hotel_id'] == hotel_id]['min_price'].tolist()[0]
+    except:
+        return -1
+
+
