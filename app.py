@@ -109,6 +109,7 @@ def getAllId(hotel_id):
     df = query.getAllId(hotel_id)
     for index, row in df.iterrows(): 
         data.append({
+            "hotel_url": query.getURL(row['domain_hotel_id']),
             "hotel_id": row['hotel_id'],
             "domain_id": row['domain_id'],
             "domain_hotel_mapping_id":row['domain_hotel_mapping_id'],

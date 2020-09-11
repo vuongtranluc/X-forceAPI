@@ -222,4 +222,15 @@ def getMinPrice(hotel_id):
     except:
         return -1
 
+def getURL(domain_hotel_id):
+    phoenix_db = load_data.SqlCommon()
+    sql = "Select url from hotel_info where domain_hotel_id = {0}".format(domain_hotel_id)
+    df = pd.DataFrame(phoenix_db.execute(sql))
+
+    try:
+        return df[0][0]
+
+    except:
+        return -1
+
 
