@@ -63,7 +63,7 @@ def finalSearch(search_id, type_code, filters, star_number):
         # # minPrice = (0, 0)
 
         data.append({
-            "min_price": query.getMinPrice(row[0]),
+            "hotel_id": row[0],
             "address": row[2],
             "logo": row[3],
             "star_number": row[4],
