@@ -80,8 +80,8 @@ def finalSearch(search_id, type_code, filters, star_number):
     # print(data)
     # return jsonify(data)
     
-@app.route("/hotels/gethotels1/<search_id>/<int:type_code>/<filters>/<star_number>", methods=["GET"])
-def finalSearch1(search_id, type_code, filters, star_number):
+@app.route("/hotels/gethotels1/<search_id>/<int:type_code>/<filters>/<star_number>/<int:page_number>", methods=["GET"])
+def finalSearch1(search_id, type_code, filters, star_number, page_number):
     filters = filters.strip()
     search_id = search_id.strip()
     star_number = star_number.strip()
@@ -114,12 +114,13 @@ def finalSearch1(search_id, type_code, filters, star_number):
         })
     if data != []:
         data.sort(reverse=True, key=lambda row: row["point_hidden"])
-    if len(data) > 20:
-        data = data[:20]
-    for row in data:
-        row["min_price"] = min_price.getMinPrice(row["hotel_id"])
-
-    return app.response_class(json.dumps(data),mimetype='application/json')
+    try:
+        data = data[page_number*3:page_number*3 + 3]
+        for row in data:
+            row["min_price"] = min_price.getMinPrice(row["hotel_id"])
+        return app.response_class(json.dumps(data),mimetype='application/json')
+    except:
+        return app.response_class(json.dumps([]),mimetype='application/json')
     
 
 #get hotels by hotel id(when click on specific hotel)
