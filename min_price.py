@@ -19,12 +19,15 @@ def getPrice(hotel_id):
     return json.loads(x.text)
 
 def getMinPrice(hotel_id):
-    result = getPrice(hotel_id)
-    if result == [] or len(result) == 0 or result is None:
+    try:
+        result = getPrice(hotel_id)
+        if result == [] or len(result) == 0 or result is None:
+            return -1
+        minprice = 20000000000
+        for domain_rs in result:
+            for rs in domain_rs:
+                if minprice > rs['final_amount']:
+                    minprice = rs['final_amount'] 
+        return minprice
+    except:
         return -1
-    minprice = 20000000000
-    for domain_rs in result:
-        for rs in domain_rs:
-            if minprice > rs['final_amount']:
-                minprice = rs['final_amount'] 
-    return minprice
