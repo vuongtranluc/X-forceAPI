@@ -110,13 +110,14 @@ def finalSearch1(search_id, type_code, filters, star_number):
             "logo": row[3],
             "star_number": row[4],
             "overall_score": round(query.get_overallScore(row[0])[3], 1),
-            "point_hidden": round(sum(query.get_overallScore(row[0])[3:]), 2),
-            "min_price": min_price.getMinPrice(row[0])
+            "point_hidden": round(sum(query.get_overallScore(row[0])[3:]), 2)            
         })
     if data != []:
         data.sort(reverse=True, key=lambda row: row["point_hidden"])
-    if len(data) > 30:
-        data = data[:30]
+    if len(data) > 20:
+        data = data[:20]
+    for row in data:
+        row["min_price"] = min_price.getMinPrice(row["hotel_id"])
 
     return app.response_class(json.dumps(data),mimetype='application/json')
     
