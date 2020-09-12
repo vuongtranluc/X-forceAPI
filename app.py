@@ -64,6 +64,7 @@ def finalSearch(search_id, type_code, filters, star_number):
 
         data.append({
             "hotel_id": row[0],
+            "name": row[1], 
             "address": row[2],
             "logo": row[3],
             "star_number": row[4],
