@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 import os
-import query, load_data, sort_and_filter, handle_input
+import query, load_data, sort_and_filter, handle_input, min_price
 import pandas as pd
 import numpy as np
 import json
@@ -70,7 +70,6 @@ def finalSearch(search_id, type_code, filters, star_number):
             "star_number": row[4],
             "overall_score": round(query.get_overallScore(row[0])[3], 1),
             "point_hidden": round(sum(query.get_overallScore(row[0])[3:]), 2)
-
         })
     if data != []:
         data.sort(reverse=True, key=lambda row: row["point_hidden"])
@@ -81,6 +80,47 @@ def finalSearch(search_id, type_code, filters, star_number):
     # print(data)
     # return jsonify(data)
     
+@app.route("/hotels/gethotels1/<search_id>/<int:type_code>/<filters>/<star_number>", methods=["GET"])
+def finalSearch1(search_id, type_code, filters, star_number):
+    filters = filters.strip()
+    search_id = search_id.strip()
+    star_number = star_number.strip()
+    data = []
+    if type_code == 0:
+        search_id = " ".join(search_id.split())
+        search_id = handle_input.string_no_accent(search_id)
+        df = query.keywordSugesstion(search_id)
+        search_id = df.head(1)['search_id'].tolist()[0]
+        type_code = df.head(1)['type_code'].tolist()[0]
+    if type_code == 1:
+        search_id = int(search_id)
+        df = query.getHotelsInProvince(search_id, filters, star_number)
+    if type_code == 2:
+        search_id = int(search_id)
+        df = query.getHotelsInDistrict(search_id, filters, star_number)
+    if type_code == 3:
+        search_id = int(search_id)
+        df = query.getHotelsWithName(search_id)
+    
+    for index, row in df.iterrows(): 
+        data.append({
+            "hotel_id": row[0],
+            "name": row[1], 
+            "address": row[2],
+            "logo": row[3],
+            "star_number": row[4],
+            "overall_score": round(query.get_overallScore(row[0])[3], 1),
+            "point_hidden": round(sum(query.get_overallScore(row[0])[3:]), 2),
+            "min_price": min_price.getMinPrice(row[0])
+        })
+    if data != []:
+        data.sort(reverse=True, key=lambda row: row["point_hidden"])
+    if len(data) > 30:
+        data = data[:30]
+
+    return app.response_class(json.dumps(data),mimetype='application/json')
+    
+
 #get hotels by hotel id(when click on specific hotel)
 @app.route("/hotels/getByID/<int:hotel_id>", methods=["GET"])
 def getByID(hotel_id):
@@ -117,6 +157,16 @@ def getAllId(hotel_id):
             "domain_hotel_id": row['domain_hotel_id']
         })
     # print("??????")
+    return app.response_class(json.dumps(data),mimetype='application/json')
+
+@app.route("/getMinPrice/<int:hotel_id>", methods=["GET"])
+def getMinPrice(hotel_id):
+    data = {"minPrice": min_price.getMinPrice(hotel_id)}
+    return app.response_class(json.dumps(data),mimetype='application/json')
+
+@app.route("/getPrice/<int:hotel_id>", methods=["GET"])
+def getPrice(hotel_id):
+    data = min_price.getPrice(hotel_id)
     return app.response_class(json.dumps(data),mimetype='application/json')
 
 @app.route("/", methods=["GET"])
