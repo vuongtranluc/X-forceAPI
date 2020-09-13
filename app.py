@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 import os
-import query, load_data, sort_and_filter, handle_input, min_price
+import query, load_data, sort_and_filter, handle_input, min_price, test_thread
 import pandas as pd
 import numpy as np
 import json
@@ -182,6 +182,11 @@ def getPrice(hotel_id):
 @app.route("/", methods=["GET"])
 def home():
     return render_template('instruction.html')
+
+@app.route("/testthread", methods=["GET"])
+def testthread():
+    data = test_thread.testThread()
+    return app.response_class(json.dumps(data),mimetype='application/json')
 
 #Run server
 if __name__ == "__main__":
