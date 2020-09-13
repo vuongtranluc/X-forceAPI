@@ -123,8 +123,8 @@ def finalSearch1(search_id, type_code, filters, star_number, page_number):
             # XỬ LÝ ĐOẠN NÀY SONG SONG, THREAD
             t = threading.Thread(target=min_price.getMinPrice1, args=(row,row["hotel_id"],))
             t.start()
-            t.join()
-        print(time.time() - k)
+            # t.join()
+        # print(time.time() - k)
         return app.response_class(json.dumps(data),mimetype='application/json')
     except:
         return app.response_class(json.dumps([]),mimetype='application/json')
