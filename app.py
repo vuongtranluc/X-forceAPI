@@ -4,6 +4,7 @@ import query, load_data, sort_and_filter, handle_input, min_price
 import pandas as pd
 import numpy as np
 import json
+import threading, time
 
 #init app
 app = Flask(__name__)
@@ -115,9 +116,15 @@ def finalSearch1(search_id, type_code, filters, star_number, page_number):
     if data != []:
         data.sort(reverse=True, key=lambda row: row["point_hidden"])
     try:
+        k = time.time()
         data = data[page_number*3:page_number*3 + 3]
         for row in data:
-            row["min_price"] = min_price.getMinPrice(row["hotel_id"])
+            # row["min_price"] = min_price.getMinPrice(row["hotel_id"])
+            # XỬ LÝ ĐOẠN NÀY SONG SONG, THREAD
+            t = threading.Thread(target=min_price.getMinPrice1, args=(row,row["hotel_id"],))
+            t.start()
+            t.join()
+        print(time.time() - k)
         return app.response_class(json.dumps(data),mimetype='application/json')
     except:
         return app.response_class(json.dumps([]),mimetype='application/json')

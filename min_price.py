@@ -31,3 +31,6 @@ def getMinPrice(hotel_id):
         return minprice
     except:
         return -1
+
+def getMinPrice1(row, hotel_id):
+    row["min_price"] = getMinPrice(hotel_id)
