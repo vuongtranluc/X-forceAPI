@@ -103,16 +103,13 @@ def finalSearch1(search_id, type_code, filters, star_number, page_number, number
         search_id = int(search_id)
         df = query.getHotelsWithName(search_id)
     
+    threads = []
     for index, row in df.iterrows(): 
-        data.append({
-            "hotel_id": row[0],
-            "name": row[1], 
-            "address": row[2],
-            "logo": row[3],
-            "star_number": row[4],
-            "overall_score": round(query.get_overallScore(row[0])[3], 1),
-            "point_hidden": round(sum(query.get_overallScore(row[0])[3:]), 2)            
-        })
+        t = threading.Thread(target=query.addHotel, args=(data, row,))
+        t.start()
+        threads.append(t)
+    while (any([th.is_alive() for th in threads])):
+        pass 
     if data != []:
         data.sort(reverse=True, key=lambda row: row["point_hidden"])
     try:

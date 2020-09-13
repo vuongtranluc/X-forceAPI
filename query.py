@@ -234,3 +234,13 @@ def getURL(domain_hotel_id):
         return -1
 
 
+def addHotel(data, row):
+    data.append({
+        "hotel_id": row[0],
+        "name": row[1], 
+        "address": row[2],
+        "logo": row[3],
+        "star_number": row[4],
+        "overall_score": round(get_overallScore(row[0])[3], 1),
+        "point_hidden": round(sum(get_overallScore(row[0])[3:]), 2)            
+    })
