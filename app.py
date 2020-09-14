@@ -171,7 +171,8 @@ def getAllId(hotel_id):
 
 @app.route("/getMinPrice/<int:hotel_id>", methods=["GET"])
 def getMinPrice(hotel_id):
-    data = {"minPrice": min_price.getMinPrice(hotel_id)}
+    x = min_price.getMinPrice(hotel_id)
+    data = {"minPrice": x[0], "domain_id": x[1]}
     return app.response_class(json.dumps(data),mimetype='application/json')
 
 @app.route("/getPrice/<int:hotel_id>", methods=["GET"])

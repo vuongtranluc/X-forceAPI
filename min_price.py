@@ -22,15 +22,17 @@ def getMinPrice(hotel_id):
     try:
         result = getPrice(hotel_id)
         if result == [] or len(result) == 0 or result is None:
-            return -1
+            return (-1, -1)
         minprice = 20000000000
+        domainId = 0
         for domain_rs in result:
             for rs in domain_rs:
                 if minprice > rs['final_amount']:
                     minprice = rs['final_amount'] 
-        return minprice
+                    domainId = rs['domain_id']
+        return (minprice, domainId)
     except:
-        return -1
+        return (-1, -1)
 
 def getMinPrice1(row, hotel_id):
     row["min_price"] = getMinPrice(hotel_id)
