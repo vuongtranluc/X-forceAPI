@@ -144,6 +144,8 @@ def getByID(hotel_id):
             "address": row['address'],
             "logo": row['logo'],
             "star_number": arr[1],
+            "latitude": row['latitude'],
+            "longitude": row['longitude'],
             "overall_score": round(arr[3], 1),
             "location_score": round(arr[4], 1),
             "sleep_quality_score": round(arr[5], 1),
