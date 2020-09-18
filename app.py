@@ -182,6 +182,19 @@ def getPrice(hotel_id):
     data = min_price.getPrice(hotel_id)
     return app.response_class(json.dumps(data),mimetype='application/json')
 
+@app.route("/getReview/<int:hotel_id>", methods=["GET"])
+def getReview(hotel_id):
+    data = []
+    df = query.getReviews(hotel_id)
+    for index, row in df.iterrows(): 
+        data.append({
+            "time": row[0],
+            "title": row[1],
+            "content": row[2],
+            "score":row[3]
+        })
+    return app.response_class(json.dumps(data),mimetype='application/json')
+
 @app.route("/", methods=["GET"])
 def home():
     return render_template('instruction.html')

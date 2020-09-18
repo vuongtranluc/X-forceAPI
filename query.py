@@ -244,3 +244,15 @@ def addHotel(data, row):
         "overall_score": round(get_overallScore(row[0])[3], 1),
         "point_hidden": round(sum(get_overallScore(row[0])[3:]), 2)            
     })
+    
+def getReviews(hotel_id):
+    FinalMapping = pd.read_csv('FinalMapping.csv')
+    df = pd.DataFrame(FinalMapping[FinalMapping['hotel_id'] == hotel_id]['domain_hotel_mapping_id'])
+    df['domain_hotel_id'] = 0
+    for index, row in df.iterrows():
+        df.loc[df['domain_hotel_mapping_id'] == row['domain_hotel_mapping_id'], 'domain_hotel_id'] = getDomainHotelId(row['domain_hotel_mapping_id'])
+    df = df.drop_duplicates(subset='domain_hotel_id', keep="first")
+    domain_hotel_ids = df['domain_hotel_id'].values.tolist()
+    phoenix_db = load_data.SqlCommon()  
+    df = pd.DataFrame(phoenix_db.execute("select review_datetime, title, text, score from hotel_review where lang_code = 'vi' and domain_hotel_id in " + str(domain_hotel_ids) + " limit 5"))
+    return df
